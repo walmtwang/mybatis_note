@@ -1,0 +1,22 @@
+<component name="libraryTable">
+  <library name="ant-1.9.6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/ant-1.9.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/ant-launcher-1.9.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/asm-5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/cglib-3.2.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/commons-logging-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/javassist-3.22.0-CR2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/log4j-1.2.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/log4j-api-2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/log4j-core-2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/mybatis-3.4.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/mysql-connector-java-5.1.40-bin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/ognl-3.1.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/slf4j-api-1.7.25.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mybatis/lib/slf4j-log4j12-1.7.25.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
