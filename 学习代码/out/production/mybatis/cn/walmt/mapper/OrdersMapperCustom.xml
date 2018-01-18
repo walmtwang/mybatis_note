@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace命名空间，作用就是对SQL进行分类化管理，理解SQL隔离
+    注意：使用mapper代理方法开发，namespace有特殊重要的作用，namespace等于mapper接口地址
+-->
+<mapper namespace="cn.walmt.mapper.OrdersMapperCustom">
+
+    <!--查询订单关联查询用户-->
+    <select id="findOrdersUser" resultType="OrdersCustom">
+        select o.*, u.username, u.sex, u.address
+        from orders o, user u
+        where o.user_id = u.id
+    </select>
+
+    <!--订单关联查询用户的resultMap
+    将整个查询的结果映射到Orders中
+    -->
+    <resultMap id="ordersUserResultMap" type="Orders">
+        <!--配置映射的订单信息-->
+        <!--id：指定查询列中唯一标识，订单中的唯一标识，如果有多个组成唯一标识，配置多个id
+            column：订单标识的唯一标识列
+            property：订单信息的唯一标识列映射到Orders中哪个属性
+        -->
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="number" property="number"/>
+        <result column="createtime" property="createTime"/>
+        <result column="note" property="note"/>
+
+        <!--配置映射的关联的用户信息-->
+        <!--association：用于映射关联查询单个对象的信息
+            property：要将关联查询的用户信息映射到Orders中哪个属性
+        -->
+        <association property="user" javaType="User">
+            <!--id：关联查询用户的唯一标识
+                column：指定唯一标识用户的列
+                javaType：映射到User的哪个属性
+            -->
+            <id column="user_id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="sex" property="sex"/>
+            <result column="address" property="address"/>
+        </association>
+    </resultMap>
+
+    <!--查询订单关联查询用户，使用resultMap-->
+    <select id="findOrdersUserResultMap" resultMap="ordersUserResultMap">
+        select o.*, u.username, u.sex, u.address
+        from orders o, user u
+        where o.user_id = u.id
+    </select>
+
+    <!--订单及明细的resultMap
+    使用extends继承，不用在此中配置订单信息和用户信息的映射
+    -->
+    <resultMap id="ordersAndOrderDetailResultMap" type="Orders" extends="ordersUserResultMap">
+        <!--订单信息-->
+        <!--用户信息-->
+        <!--使用extends继承，不用在此中配置订单信息和用户信息的映射-->
+
+        <!--订单明细信息
+        一个订单关联查询出多条明细，要使用collection进行映射
+        collection：对关联查询到多条记录映射到集合对象中
+        property：将关联查询到多条记录映射到Order?s哪个属性
+        ofType：指定映射到集合属性中pojo的类型
+        -->
+        <collection property="orderDetails" ofType="OrderDetail">
+            <!--id：订单明细唯一标识
+            propery：要将订单的唯一标识映射到OrderDetail的哪个属性中
+            -->
+            <id column="od_id" property="id"/>
+            <result column="items_id" property="itemsId"/>
+            <result column="items_num" property="itemsNum"/>
+            <result column="orders_id" property="ordersId"/>
+        </collection>
+    </resultMap>
+
+    <!--查询订单关联查询用户及明细，使用resultMap-->
+    <select id="findOrdersAndOrderDetailResultMap" resultMap="ordersAndOrderDetailResultMap">
+        select o.*, u.username, u.sex, u.address, od.id od_id, od.items_id, od.items_num, od.orders_id
+        from orders o, user u, orderdetail od
+        where o.user_id = u.id and od.orders_id = o.id
+    </select>
+
+    <!--查询用户及购买的商品信息-->
+    <resultMap id="UserAndResultMap" type="User">
+        <!--用户信息-->
+        <id column="user_id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="sex" property="sex"/>
+        <result column="address" property="address"/>
+
+        <!--订单信息
+        一个用户对应多个订单，使用collection映射
+        -->
+        <collection property="ordersList" ofType="Orders">
+            <id column="id" property="id"/>
+            <result column="user_id" property="userId"/>
+            <result column="number" property="number"/>
+            <result column="createtime" property="createTime"/>
+            <result column="note" property="note"/>
+
+            <!--订单明细
+            一个订单包括多个明细
+            -->
+            <collection property="orderDetails" ofType="OrderDetail">
+                <id column="od_id" property="id"/>
+                <result column="items_id" property="itemsId"/>
+                <result column="items_num" property="itemsNum"/>
+                <result column="orders_id" property="ordersId"/>
+                <association property="items" javaType="Items">
+                    <id column="items_id" property="id"/>
+                    <result column="items_name" property="name"/>
+                    <result column="items_detail" property="detail"/>
+                    <result column="items_price" property="price"/>
+                </association>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <!--查询用户及购买的商品信息，使用resultMap-->
+    <select id="findUserAndItemsResultMap" resultMap="UserAndResultMap">
+        select o.*,
+        u.username, u.sex, u.address,
+        od.id od_id, od.items_id,
+        od.items_num, od.orders_id,
+        i.name items_name, i.detail items_detail, i.price items_price
+        from orders o, user u, orderdetail od, items i
+        where o.user_id = u.id and od.orders_id = o.id and od.items_id = i.id
+    </select>
+
+    <!--延迟加载的resultMap-->
+    <resultMap id="OrdersUserLazyLoadingResultMap" type="Orders">
+        <!--对订单信息进行映射配置-->
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="number" property="number"/>
+        <result column="createtime" property="createTime"/>
+        <result column="note" property="note"/>
+        <!--实现对用户信息进行延迟加载
+        select：指定延迟加载需要执行的statement的id（是根据user_id查询用户信息的statement）
+        要使用userMapper.xml中findUserById完成根据用户id（user_id）用户信息查询，如果findUserById不在本mapper中需要前面加上namespace
+        column：订单信息中关联用户信息查询的列，是user_id
+        关联查询的sql理解为：
+        select o.*,
+        (select username from user u where o.user_id = u.id) username,
+        (select sex from user u where o.user_id = u.id) sex
+        from orders o
+        -->
+        <association property="user" javaType="User" select="cn.walmt.mapper.UserMapper.findUserById" column="user_id">
+            <!--实现对用户信息进行延迟加载-->
+
+        </association>
+    </resultMap>
+
+    <!--查询订单关联查询用户，用户信息需要延迟加载-->
+    <select id="findOrdersUserLazyLoading" resultMap="OrdersUserLazyLoadingResultMap">
+        select * from orders
+    </select>
+</mapper>
